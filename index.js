@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
- import pgk from "pg"; 
+ import pkg from "pg"; 
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import nodemailer from 'nodemailer';
