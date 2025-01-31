@@ -25,6 +25,10 @@ const db=new Pool({
     // user:process.env.DB_USER,
     // database:process.env.DB_NAME,
     // password:process.env.DB_PASSWORD,
+    host:process.env.SUPABASE_HOST,
+    database:process.env.SUPABASE_DB,
+    user:process.env.SUPABASE_USER,
+    password:process.env.SUPABASE_PASSWORD,
     
     connectionString: process.env.DATABASE_URL,
 
