@@ -1,8 +1,12 @@
+# Ignore node_modules directory
+node_modules/
 
-node_modules/       # Ignore the node_modules directory
-npm-debug.log       # Ignore npm debug logs
-yarn-error.log      # Ignore yarn error logs
-.env                # Ignore environment variables file (e.g. contains API keys)
-dist/               # Ignore the build/dist folder (if you're bundling your app with a tool like webpack)
-build/  
-# https://github.com/rajkishored/ai_backend.git
+# Ignore .env file
+.env
+
+# Ignore logs
+*.log
+
+# Ignore build files
+/dist
+/build
