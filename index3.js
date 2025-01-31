@@ -41,7 +41,7 @@ app.route("/reg")
     console.log(req.body);
     const { uname, upassword, email } = req.body;
    try{
-        const resp=await db.query("Select * from users where email=$1",[email] )
+        const resp=await db.query("Select * from useres where email=$1",[email] )
         console.log((resp.rows[0]));
         if(resp.rows[0]){
             return res.status(400).json({ message: "Email already exists!" });
@@ -52,7 +52,7 @@ app.route("/reg")
                     console.log(hash);
                    
                     try{
-                const result=await db.query("insert into users (uname,email,password) values ($1,$2,$3) returning*",[uname,email,hash]);
+                const result=await db.query("insert into useres (uname,email,password) values ($1,$2,$3) returning*",[uname,email,hash]);
                 console.log(result.rows);
                 return res.status(400).json({ message: "login to continue" });
                 
@@ -82,7 +82,7 @@ app.route("/reg")
         console.log(req.body);
         let {lpassword,lemail}=req.body;
         try{
-            const resp=await db.query("select * from users where email=$1",[lemail])
+            const resp=await db.query("select * from useres where email=$1",[lemail])
             console.log(resp.rows[0]);
 
             if (resp.rows[0]) {
@@ -140,7 +140,7 @@ app.route("/reg")
          
 
          try{
-            let mailres=await db.query("select email from users where email=$1",[maill]);
+            let mailres=await db.query("select email from useres where email=$1",[maill]);
             console.log(mailres.rows[0]);
            if(mailres.rows[0]){
             let rmail=mailres.rows[0].email;
@@ -223,7 +223,7 @@ app.route("/reg")
                 }
                 else{
                     try{
-                        const resps=await db.query("update users set password=$1 where email=$2",[hash,maill]);
+                        const resps=await db.query("update useres set password=$1 where email=$2",[hash,maill]);
                         // console.log(resps);
                         if(resps){
                             return res.json({message:"password set successfully"})
