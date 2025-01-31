@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
-import pg from "pg";
+ import { Pool } from "pg"; 
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import nodemailer from 'nodemailer';
@@ -19,7 +19,7 @@ const saltrounds=5;
 
 env.config();
 
-const db=new pg.Client({
+const db=new pg.Pool({
     // host:process.env.DB_HOST,
     // user:process.env.DB_USER,
     // database:process.env.DB_NAME,
