@@ -27,7 +27,7 @@ const db=new pg.Client({
     connectionString: process.env.DATABASE_URL,
 
     port:5432,
-    connectionString: process.env.DATABASE_URL,
+  
   ssl: {
     rejectUnauthorized: false, 
   },
@@ -265,7 +265,7 @@ app.route("/reg")
         let {promptt}=req.body;
         console.log(promptt+" give in 10 lines");
         // console.log(API)
-      try{  
+        
 
         const genAI = new GoogleGenerativeAI(API);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -282,12 +282,6 @@ app.route("/reg")
         else{
             return res.json({message:"sorry, not found"})
         }
-    }
-    catch(error){
-        console.log(error.stack);
-        return res.json({message:"refresh and start again"})
-        
-    }
         // setdata(result.response.text())
 
     })
