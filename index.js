@@ -1,7 +1,8 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
- import pkg from "pg"; 
+//  import pkg from "pg"; 
+ import pg from "pg";
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import nodemailer from 'nodemailer';
@@ -18,17 +19,17 @@ const saltrounds=5;
 
 
 env.config();
-const { Pool } = pkg;
+// const { Pool } = pkg;
 
-const db=new Pool({
-    // host:process.env.DB_HOST,
-    // user:process.env.DB_USER,
-    // database:process.env.DB_NAME,
-    // password:process.env.DB_PASSWORD,
-    host:process.env.SUPABASE_HOST,
-    database:process.env.SUPABASE_DB,
-    user:process.env.SUPABASE_USER,
-    password:process.env.SUPABASE_PASSWORD,
+const db=new pg.Client({
+    host:process.env.DB_HOST,
+    user:process.env.DB_USER,
+    database:process.env.DB_NAME,
+    password:process.env.DB_PASSWORD,
+    // host:process.env.SUPABASE_HOST,
+    // database:process.env.SUPABASE_DB,
+    // user:process.env.SUPABASE_USER,
+    // password:process.env.SUPABASE_PASSWORD,
     
     connectionString: process.env.DATABASE_URL,
 
