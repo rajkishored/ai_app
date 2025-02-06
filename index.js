@@ -6,9 +6,12 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import nodemailer from 'nodemailer';
-import { hash } from "crypto";
+import { hash, secureHeapUsed } from "crypto";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import env from "dotenv";
+import jwt from "jsonwebtoken";
+import { log } from "console";
+
 
 
 
@@ -20,6 +23,9 @@ const saltrounds=5;
 
 env.config();
 // const { Pool } = pkg;
+
+const skey=process.env.SECRETE_KEY;
+const srkey=process.env.R_SECRETE_KEY;
 
 const db=new pg.Client({
     host:process.env.DB_HOST,
@@ -91,9 +97,44 @@ app.route("/reg")
         
     }})
 
+    //////////////////////////////////////////
+
+    const authenticate = (req, res, next) => {
+        console.log("hello");
+        
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        console.log(token,"token");
+        
+      
+        if (!token) {return res.status(401).json({mm:'Access denied'});}
+      
+        try {
+           
+            
+          const verified = jwt.verify(token, srkey);
+          console.log(verified,"veri");
+          
+          req.user = verified; // Attach user info to request object
+          next(); // Pass to next middleware or route
+        } catch (error) {
+          res.status(400).send('Invalid token');
+        }
+      };
+
+
+    // creating tokens
+
+    let generateAccessToken=(user)=>{
+        return jwt.sign(user,srkey,{expiresIn:'1hr'});
+    }
+    let generateRefreshToken=(user)=>{
+        return jwt.sign(user,skey,{expiresIn:'7d'});
+    }
+
 
     app.post("/log",async(req,res)=>{
-
+            console.log("hello");
+            
         console.log(req.body);
         let {lpassword,lemail}=req.body;
         try{
@@ -113,7 +154,17 @@ app.route("/reg")
                         console.log("result",result);
                         
                        if (result) {
-                        return res.json({message:"Successfull"})
+                       
+
+
+                        const accessToken = generateAccessToken({ email: lemail });
+                        const refreshToken = generateRefreshToken({ email: lemail });
+                        console.log(accessToken,"and", refreshToken);
+                    
+                             return res.json({message:"Successfull",accessToken,refreshToken})
+                            
+                               
+
                        }
                        else{    
                         return res.json({message:"wrong password"})
@@ -137,6 +188,50 @@ app.route("/reg")
         }
         
     })
+    
+    app.post("/access_chec",authenticate,async(req,res)=>{
+        // let {atoken}=req.body;
+        // console.log("yes");
+        res.json({m:"true"})
+      
+        
+    })
+
+
+    app.post("/refresh_tok",async(req,res)=>{
+        const { refreshToken } = req.body;
+
+        if(!refreshToken){
+            return res.status(401).send("No refresh token provided.");
+        }
+
+        jwt.verify(refreshToken,srkey,(err,user)=>{
+            if(err){
+                console.log("invalid refresh token");
+                
+            }
+            console.log(user,"user");
+            
+            const accessToken = generateAccessToken({ email: user.email });
+            return res.json({ accessToken });
+        })
+    })
+
+
+
+
+
+// app.get('/protected', authenticate, (req, res) => {
+//     console.log("hiii");
+//     res.json({message:"success"})
+    
+//     console.log(`Hello, ${req.user.username}! This is a protected route.`);
+    
+//     // res.send(`Hello, ${req.user.username}! This is a protected route.`);
+//   });
+
+
+    // otp
 
     let tempotp={};
 
@@ -265,7 +360,7 @@ app.route("/reg")
 
     const API=process.env.REACT_APP_API;
 
- app.post("/ai",async(req,res)=>{
+ app.post("/ai", authenticate, async(req,res)=>{
 
    
     
